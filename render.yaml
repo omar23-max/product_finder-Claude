@@ -3,7 +3,7 @@ services:
     name: product-finder
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:$PORT
+    startCommand: gunicorn app:app --worker-class gevent --workers 1 --worker-connections 100 --timeout 300 --bind 0.0.0.0:$PORT
     envVars:
       - key: APIFY_API_KEY
         sync: false          # ← tu saisiras la valeur dans le dashboard Render
