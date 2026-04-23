@@ -1,0 +1,35 @@
+# ── Clés API et secrets ────────────────────────────────────
+.env
+.env.txt
+*.env
+
+# ── Archives locales (stockées sur Render persistant disk) ──
+archives.json
+
+# ── Résultats générés ───────────────────────────────────────
+results_*.xlsx
+results_*.json
+product_finder.log
+
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+pip-wheel-metadata/
+*.egg-info/
+dist/
+build/
+
+# ── OS ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: product-finder
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: APIFY_API_KEY
+        sync: false          # ← tu saisiras la valeur dans le dashboard Render
+      - key: CJ_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.9
+    disk:
+      name: archives-data
+      mountPath: /data
+      sizeGB: 1              # stockage persistant pour archives.json

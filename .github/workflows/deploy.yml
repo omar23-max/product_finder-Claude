@@ -1,0 +1,77 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ── 1. Tests avant déploiement ─────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Syntax check — tous les fichiers Python
+        run: |
+          python -m py_compile app.py
+          python -m py_compile config.py
+          python -m py_compile dry_run.py
+          python -m py_compile archives.py
+          python -m py_compile orchestrator.py
+          python -m py_compile agents/agent1_trends.py
+          python -m py_compile agents/agent2_social.py
+          python -m py_compile agents/agent3_suppliers.py
+          python -m py_compile agents/agent4_competition.py
+          echo "✅ Tous les fichiers Python valides"
+
+      - name: Test Flask routes
+        run: |
+          python -c "
+          import sys; sys.path.insert(0,'.')
+          from app import app
+          client = app.test_client()
+          r1 = client.get('/')
+          assert r1.status_code == 200, f'GET / failed: {r1.status_code}'
+          r2 = client.get('/api/results')
+          assert r2.status_code == 200, f'GET /api/results failed'
+          r3 = client.get('/api/archives')
+          assert r3.status_code == 200, f'GET /api/archives failed'
+          print('✅ Toutes les routes OK')
+          "
+
+      - name: Test dry run
+        run: |
+          python -c "
+          import sys, asyncio; sys.path.insert(0,'.')
+          from dry_run import DryRunOrchestrator
+          results = asyncio.run(DryRunOrchestrator().run({
+              'niche': 'Pets', 'markets': ['USA'],
+              'budget': '500', 'days_window': 30
+          }))
+          assert len(results) > 0, 'Dry run returned no results'
+          assert all('final_score' in r for r in results), 'Missing final_score'
+          print(f'✅ Dry run OK — {len(results)} produits')
+          " 2>/dev/null
+
+  # ── 2. Déploiement automatique sur Render ──────────────────────
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" \
+            -H "Content-Type: application/json" \
+            --fail --silent
+          echo "✅ Déploiement Render déclenché"
