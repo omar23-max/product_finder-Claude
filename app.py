@@ -830,7 +830,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     <div class="form-grid-wide">
       <div class="field">
-        <label>Mots-clés produits <span class="field-hint">FB Ads · TikTok · Amazon · AliExpress</span></label>
+        <label>Mots-clés produits <span class="field-hint" id="keywords-badge">FB Ads · TikTok · Amazon · AliExpress</span></label>
         <small class="field-desc">Mots-clés spécifiques pour scraper les pubs et produits. Sépare par des virgules.</small>
         <div class="kw-input-wrap">
           <input type="text" id="keywords" placeholder="ex : posture corrector, back pain relief, ergonomic…">
