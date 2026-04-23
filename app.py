@@ -986,12 +986,10 @@ function updateKeywordsBadge() {
   if (badge) badge.textContent = active.length ? active.join(' · ') : 'Aucune source';
 }
 document.querySelectorAll('.source-chip').forEach(chip => {
-  chip.addEventListener('click', function() {
-    const cb = this.querySelector('input[type=checkbox]');
-    setTimeout(() => {
-      this.classList.toggle('active', cb.checked);
-      updateKeywordsBadge();
-    }, 0);
+  const cb = chip.querySelector('input[type=checkbox]');
+  cb.addEventListener('change', function() {
+    chip.classList.toggle('active', this.checked);
+    updateKeywordsBadge();
   });
 });
   document.querySelectorAll('.chip').forEach(c => {
@@ -1347,9 +1345,10 @@ document.querySelectorAll('.source-chip').forEach(chip => {
 
   // ── Sources checkboxes ───────────────────────────
   document.querySelectorAll('.source-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      chip.classList.toggle('active');
-      chip.querySelector('input').checked = chip.classList.contains('active');
+    const cb = chip.querySelector('input[type=checkbox]');
+    cb.addEventListener('change', function() {
+      chip.classList.toggle('active', this.checked);
+      updateKeywordsBadge();
     });
   });
 
