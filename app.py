@@ -971,6 +971,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   let progressCount = 0, progressTotal = 0;
 
   // ── Chips marchés ──
+  // ── Source chips ──
+const SOURCE_LABELS = {
+  facebook_ads: 'FB Ads', tiktok_videos: 'TikTok Vidéos',
+  amazon: 'Amazon', aliexpress: 'AliExpress',
+  reddit: 'Reddit', pinterest: 'Pinterest', youtube: 'YouTube'
+};
+function updateKeywordsBadge() {
+  const active = [...document.querySelectorAll('.source-chip')]
+    .filter(c => c.classList.contains('active'))
+    .map(c => SOURCE_LABELS[c.dataset.source])
+    .filter(Boolean);
+  const badge = document.getElementById('keywords-badge');
+  if (badge) badge.textContent = active.length ? active.join(' · ') : 'Aucune source';
+}
+document.querySelectorAll('.source-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    const cb = this.querySelector('input[type=checkbox]');
+    setTimeout(() => {
+      this.classList.toggle('active', cb.checked);
+      updateKeywordsBadge();
+    }, 0);
+  });
+});
   document.querySelectorAll('.chip').forEach(c => {
     c.addEventListener('click', () => c.classList.toggle('active'));
   });
